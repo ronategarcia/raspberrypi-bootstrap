@@ -61,10 +61,15 @@ def draw_pose(image, landmarks):
 
 def main():
     '''
-    Show a video feed using the Pi camera and process the frames.
+    Show a video feed using the Pi camera, process the frames, and record the video.
     '''
     # Create a pose estimation model 
     mp_pose = mp.solutions.pose
+
+    # Initialize video writer
+    frame_width = 640
+    frame_height = 480
+    video_writer = cv2.VideoWriter('output_video.avi', cv2.VideoWriter_fourcc(*'XVID'), 20.0, (frame_width, frame_height))
 
     # Start detecting the pose
     with mp_pose.Pose(
@@ -88,6 +93,9 @@ def main():
                 # Draw the pose landmarks on the frame
                 frame = draw_pose(frame, results.pose_landmarks)
 
+            # Write the frame to the video file
+            video_writer.write(frame)
+
             # Display the frame
             cv2.imshow('Pose Detection', frame)
 
@@ -96,6 +104,7 @@ def main():
                 break
 
         # Release resources
+        video_writer.release()
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":
